@@ -1,0 +1,16 @@
+# Archivos de Entorno y Datos Sensibles
+.env
+.env.local
+*.log
+
+# Temporales de Sistema Operativo y Editores
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Directorios de compilación y temporales
+dist/
+build/
+*.tmp
+*.bak

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reserva de Horas Médicas - Centro Médico VitalSalud</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="container nav-container">
+            <div class="logo">
+                <span class="icon">🏥</span>
+                <h1>VitalSalud <small>Reserva de Horas</small></h1>
+            </div>
+            <span class="badge-env">v1.0.0 (DevOps Production)</span>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="hero">
+            <h2>Plataforma de Agenda Médica en Línea</h2>
+            <p>Selecciona la especialidad, profesional y horario de tu preferencia en sencillos pasos.</p>
+        </section>
+
+        <section class="card form-card">
+            <h3>Formulario de Reserva de Atención</h3>
+            <form id="bookingForm" onsubmit="handleFormSubmit(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="rut">RUT / Identificación del Paciente</label>
+                        <input type="text" id="rut" placeholder="12.345.678-K" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="nombre">Nombre Completo</label>
+                        <input type="text" id="nombre" placeholder="Ej: María González Pérez" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Correo Electrónico</label>
+                        <input type="email" id="email" placeholder="paciente@ejemplo.cl" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="telefono">Teléfono de Contacto</label>
+                        <input type="tel" id="telefono" placeholder="+56 9 1234 5678" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="especialidad">Especialidad Médica</label>
+                        <select id="especialidad" required onchange="updateMedicos()">
+                            <option value="">-- Seleccione Especialidad --</option>
+                            <option value="general">Medicina General</option>
+                            <option value="cardiologia">Cardiología</option>
+                            <option value="pediatria">Pediatría</option>
+                            <option value="dermatologia">Dermatología</option>
+                            <option value="odontologia">Odontología</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="medico">Médico / Profesional</label>
+                        <select id="medico" required>
+                            <option value="">-- Seleccione Médico --</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fecha">Fecha de Atención</label>
+                        <input type="date" id="fecha" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="hora">Bloque Horario</label>
+                        <select id="hora" required>
+                            <option value="">-- Seleccione Horario --</option>
+                            <option value="09:00">09:00 hrs</option>
+                            <option value="10:30">10:30 hrs</option>
+                            <option value="12:00">12:00 hrs</option>
+                            <option value="15:00">15:00 hrs</option>
+                            <option value="16:30">16:30 hrs</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="prevision">Previsión de Salud</label>
+                        <div class="radio-group">
+                            <label><input type="radio" name="prevision" value="fonasa" checked> Fonasa</label>
+                            <label><input type="radio" name="prevision" value="isapre"> Isapre</label>
+                            <label><input type="radio" name="prevision" value="particular"> Particular</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="reset" class="btn btn-secondary">Limpiar</button>
+                    <button type="submit" class="btn btn-primary">Confirmar Reserva</button>
+                </div>
+            </form>
+        </section>
+
+        <div id="confirmationModal" class="modal hidden">
+            <div class="modal-content">
+                <span class="success-icon">✅</span>
+                <h3>¡Reserva Confirmada Exitosamente!</h3>
+                <p id="confirmationText"></p>
+                <button class="btn btn-primary" onclick="closeModal()">Aceptar</button>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 VitalSalud - Desplegado con Nginx & Docker Compose | Proyecto Integrador DevOps</p>
+        </div>
+    </footer>
+
+    <script>
+        const medicosPorEspecialidad = {
+            general: ["Dr. Carlos Mendoza", "Dra. Patricia Silva"],
+            cardiologia: ["Dr. Roberto Araya", "Dra. Elena Fuentes"],
+            pediatria: ["Dra. Camila Morales", "Dr. Javier Ríos"],
+            dermatologia: ["Dra. Sofia Sepúlveda"],
+            odontologia: ["Dr. Andrés Torres", "Dra. Marcela Castro"]
+        };
+
+        function updateMedicos() {
+            const esp = document.getElementById('especialidad').value;
+            const medicoSelect = document.getElementById('medico');
+            medicoSelect.innerHTML = '<option value="">-- Seleccione Médico --</option>';
+            if (medicosPorEspecialidad[esp]) {
+                medicosPorEspecialidad[esp].forEach(m => {
+                    const opt = document.createElement('option');
+                    opt.value = m;
+                    opt.textContent = m;
+                    medicoSelect.appendChild(opt);
+                });
+            }
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            const nombre = document.getElementById('nombre').value;
+            const medico = document.getElementById('medico').value;
+            const fecha = document.getElementById('fecha').value;
+            const hora = document.getElementById('hora').value;
+
+            document.getElementById('confirmationText').innerText = 
+                `Estimado(a) ${nombre}, su hora médica con ${medico} ha sido agendada para el día ${fecha} a las ${hora} hrs.`;
+            document.getElementById('confirmationModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('confirmationModal').classList.add('hidden');
+            document.getElementById('bookingForm').reset();
+        }
+    </script>
+</body>
+</html>
